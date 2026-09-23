@@ -34,15 +34,7 @@ const STUDENT_VALIDATORS = {
 };
 
 const DEPT_OPTIONS = [
-  'Computer Science & Engineering',
-  'Information Technology',
-  'Electronics & Telecommunication',
-  'Mechanical Engineering',
-  'Civil Engineering',
-  'Electrical Engineering',
-  'Artificial Intelligence & ML',
-  'Data Science',
-  'Other',
+  'BCS'
 ];
 
 // ── Field wrapper — MUST be outside App to prevent remount on re-render ──────
