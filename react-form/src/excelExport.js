@@ -13,11 +13,9 @@ export function exportToExcel(submissions) {
 
     groups.forEach((group, gi) => {
       // Group header row
-      rows.push([`Group ${gi + 1}`, '', '', '', '', '', '', '']);
+      rows.push([`Group ${gi + 1}`, '', '', '', '']);
       rows.push([
         'Group Name', group.groupName || group.groupId,
-        'Academic Year', group.academicYear,
-        'Department', group.department,
         'Submitted', new Date(group.submittedAt).toLocaleString('en-IN'),
       ]);
       rows.push([]); // blank
@@ -25,7 +23,6 @@ export function exportToExcel(submissions) {
       rows.push([
         'Sr. No.',
         'Student Full Name',
-        'Roll / Enrollment No.',
         'Email Address',
         'Contact Number',
       ]);
@@ -34,7 +31,6 @@ export function exportToExcel(submissions) {
         rows.push([
           i + 1,
           s.name,
-          s.rollno,
           s.email,
           s.mobile,
         ]);
@@ -71,11 +67,9 @@ export function exportSingleGroup(data) {
     [],
     ['Project Topic', data.projectTopic],
     ['Group Name', data.groupName || data.groupId],
-    ['Academic Year / Semester', data.academicYear],
-    ['Department', data.department],
     [],
-    ['Sr. No.', 'Student Full Name', 'Roll / Enrollment No.', 'Email Address', 'Contact Number'],
-    ...data.students.map((s, i) => [i + 1, s.name, s.rollno, s.email, s.mobile]),
+    ['Sr. No.', 'Student Full Name', 'Email Address', 'Contact Number'],
+    ...data.students.map((s, i) => [i + 1, s.name, s.email, s.mobile]),
     [],
     ['Submitted At', new Date(data.submittedAt || Date.now()).toLocaleString('en-IN')],
   ];

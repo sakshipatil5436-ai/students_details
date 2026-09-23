@@ -16,12 +16,10 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
     const matchedGroups = data[t].filter(g => {
       const matchTopic = t.toLowerCase().includes(term);
       const matchGroup = String(g.groupName || g.groupId || '').toLowerCase().includes(term);
-      const matchDept  = String(g.department || '').toLowerCase().includes(term);
-      const matchYear  = String(g.academicYear || '').toLowerCase().includes(term);
       const students   = g.students || [g.leader, ...(g.members||[])];
       const matchStu   = students.some(s => s && String(s.name || '').toLowerCase().includes(term));
       
-      return matchTopic || matchGroup || matchDept || matchYear || matchStu;
+      return matchTopic || matchGroup || matchStu;
     });
     
     if (matchedGroups.length > 0) {
@@ -133,8 +131,6 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                   {/* Group meta row */}
                   <div className="group-card-meta">
                     <span>👥 Group: <strong>{group.groupName || group.groupId || '—'}</strong></span>
-                    <span>📅 <strong>{group.academicYear}</strong></span>
-                    <span>🏛️ <strong>{group.department}</strong></span>
                     <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
                       <span
                         style={{cursor:'pointer',color:'var(--text-mid)',fontSize:'0.73rem',fontWeight:600}}
@@ -169,7 +165,6 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                         <tr>
                           <th>Sr.</th>
                           <th>Full Name</th>
-                          <th>Roll No.</th>
                           <th>Email</th>
                           <th>Contact</th>
                         </tr>
@@ -183,7 +178,6 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                               <strong>{leader.name}</strong>
                               <span className="leader-badge-sm" style={{ marginLeft: 6 }}>★ LEADER</span>
                             </td>
-                            <td>{leader.rollno}</td>
                             <td>{leader.email}</td>
                             <td>{leader.mobile}</td>
                           </tr>
@@ -193,7 +187,6 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                           <tr key={si}>
                             <td>{si + 2}</td>
                             <td>{s.name}</td>
-                            <td>{s.rollno}</td>
                             <td>{s.email}</td>
                             <td>{s.mobile}</td>
                           </tr>

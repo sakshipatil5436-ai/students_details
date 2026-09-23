@@ -9,33 +9,24 @@ import { exportSingleGroup } from './excelExport';
 const N            = 4;
 const ADMIN_PASS   = 'admin@@123'; // Change this password
 
-const blankStudent = () => ({ name: '', rollno: '', email: '', mobile: '' });
-const blankErrors  = () => ({ name: '', rollno: '', email: '', mobile: '' });
-const blankTouched = () => ({ name: false, rollno: false, email: false, mobile: false });
+const blankStudent = () => ({ name: '', email: '', mobile: '' });
+const blankErrors  = () => ({ name: '', email: '', mobile: '' });
+const blankTouched = () => ({ name: false, email: false, mobile: false });
 
 const blankGroup = () => ({
   groupName:    '',
-  academicYear: '',
-  department:   '',
   projectTopic: '',
 });
 const blankGroupErr = () => ({
   groupName:    '',
-  academicYear: '',
-  department:   '',
   projectTopic: '',
 });
 
 const STUDENT_VALIDATORS = {
   name:   v => VALIDATORS.required(v, 'Full name'),
-  rollno: v => VALIDATORS.rollno(v),
   email:  v => VALIDATORS.email(v),
   mobile: v => VALIDATORS.mobile(v),
 };
-
-const DEPT_OPTIONS = [
-  'BCS'
-];
 
 // ── Field wrapper — MUST be outside App to prevent remount on re-render ──────
 function Field({ id, label, required, error, touched: isTouched, children }) {
@@ -129,16 +120,15 @@ export default function App() {
   // ── Progress ────────────────────────────────────────────────
   useEffect(() => {
     let filled = 0;
-    ['groupName','academicYear','department','projectTopic'].forEach(f => {
+    ['groupName','projectTopic'].forEach(f => {
       if (group[f]?.trim()) filled++;
     });
     students.forEach(s => {
       if (!VALIDATORS.required(s.name, 'x')) filled++;
-      if (!VALIDATORS.rollno(s.rollno))       filled++;
       if (!VALIDATORS.email(s.email))         filled++;
       if (!VALIDATORS.mobile(s.mobile))       filled++;
     });
-    setProgress(Math.round((filled / (4 + N * 4)) * 100));
+    setProgress(Math.round((filled / (2 + N * 3)) * 100));
   }, [group, students]);
 
   // ── Modal escape key ─────────────────────────────────────────
@@ -157,7 +147,7 @@ export default function App() {
 
   const handleGroupBlur = useCallback((field) => {
     setGroupTouch(prev => ({ ...prev, [field]: true }));
-    const labels = { groupName:'Group Name', academicYear:'Academic year', department:'Department', projectTopic:'Project topic' };
+    const labels = { groupName:'Group Name', projectTopic:'Project topic' };
     setGroupErr(prev => ({
       ...prev,
       [field]: VALIDATORS.required(group[field], labels[field]) || '',
@@ -198,8 +188,8 @@ export default function App() {
 
     // Group validation
     const newGroupErr   = blankGroupErr();
-    const newGroupTouch = { groupName: true, academicYear: true, department: true, projectTopic: true };
-    const labels = { groupName:'Group Name', academicYear:'Academic year', department:'Department', projectTopic:'Project topic' };
+    const newGroupTouch = { groupName: true, projectTopic: true };
+    const labels = { groupName:'Group Name', projectTopic:'Project topic' };
     Object.keys(labels).forEach(f => {
       newGroupErr[f] = VALIDATORS.required(group[f], labels[f]) || '';
       if (newGroupErr[f]) allOk = false;
@@ -220,15 +210,14 @@ export default function App() {
     // Student validation
     const newStuErrors = students.map(s => ({
       name:   STUDENT_VALIDATORS.name(s.name)    || '',
-      rollno: STUDENT_VALIDATORS.rollno(s.rollno) || '',
       email:  STUDENT_VALIDATORS.email(s.email)  || '',
       mobile: STUDENT_VALIDATORS.mobile(s.mobile) || '',
     }));
     const newStuTouch = Array.from({ length: N }, () =>
-      ({ name: true, rollno: true, email: true, mobile: true })
+      ({ name: true, email: true, mobile: true })
     );
     newStuErrors.forEach(e => {
-      if (e.name || e.rollno || e.email || e.mobile) allOk = false;
+      if (e.name || e.email || e.mobile) allOk = false;
     });
 
     setGroupErr(newGroupErr);
@@ -281,8 +270,6 @@ export default function App() {
   const handleEdit = (grp) => {
     setGroup({
       groupName: grp.groupName || grp.groupId,
-      academicYear: grp.academicYear,
-      department: grp.department,
       projectTopic: grp.projectTopic,
     });
     const parsedStudents = grp.students || [grp.leader, ...grp.members];
@@ -525,8 +512,6 @@ export default function App() {
             <div className="modal-info-box">
               <div>📁 <strong>Project:</strong> {lastData.projectTopic}</div>
               <div>👥 <strong>Group:</strong> {lastData.groupName}</div>
-              <div>🏛️ <strong>Department:</strong> {lastData.department}</div>
-              <div>📅 <strong>Academic Year:</strong> {lastData.academicYear}</div>
               <div>🧑‍🎓 <strong>Students registered:</strong> {lastData.students.length}</div>
             </div>
           )}
