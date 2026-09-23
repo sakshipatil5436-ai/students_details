@@ -111,7 +111,16 @@ export default function App() {
   const [showAdminBtn,  setShowAdminBtn]  = useState(false);
   const [showAdminLogin,setShowAdminLogin]= useState(false);
   const [adminLoggedIn, setAdminLoggedIn] = useState(false);
-  const [submissions,   setSubmissions]   = useState(getAllSubmissions());
+  const [submissions,   setSubmissions]   = useState({});
+
+  // Fetch initial submissions from API
+  useEffect(() => {
+    async function loadData() {
+      const data = await getAllSubmissions();
+      setSubmissions(data);
+    }
+    loadData();
+  }, []);
 
   // Editing state
   const [editingMode,   setEditingMode]   = useState(null);
@@ -184,7 +193,7 @@ export default function App() {
   }, [students]);
 
   // ── Submit ───────────────────────────────────────────────────
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let allOk = true;
 
@@ -200,7 +209,8 @@ export default function App() {
     // Duplicate project topic check
     let dupErr = '';
     if (!newGroupErr.projectTopic && group.projectTopic.trim()) {
-      if (isTopicAlreadyRegistered(group.projectTopic)) {
+      const isRegistered = await isTopicAlreadyRegistered(group.projectTopic);
+      if (isRegistered) {
         if (!editingMode || (editingMode.projectTopic.toLowerCase() !== group.projectTopic.toLowerCase())) {
           dupErr = `Project "${group.projectTopic.trim()}" is already registered. Each topic can be registered only once.`;
           allOk  = false;
@@ -240,14 +250,15 @@ export default function App() {
     setSubmitting(true);
     const filteredStudents = students.filter((s, i) => i === 0 || !isStudentEmpty(s)).map(s => ({ ...s }));
     const submission = { ...group, students: filteredStudents, submittedAt: new Date().toISOString() };
-    setTimeout(() => {
+    setTimeout(async () => {
       if (editingMode) {
-        updateSubmission(editingMode.projectTopic, submission);
+        await updateSubmission(editingMode.projectTopic, submission);
       } else {
-        saveSubmission(submission);
+        await saveSubmission(submission);
       }
       setLastData(submission);
-      setSubmissions(getAllSubmissions());
+      const updatedData = await getAllSubmissions();
+      setSubmissions(updatedData);
       setSubmitting(false);
       setShowModal(true);
     }, 1200);

@@ -23,43 +23,29 @@ export const VALIDATORS = {
   },
 };
 
-// ── localStorage ─────────────────────────────────────────────
-const STORAGE_KEY = 'gptr_submissions';
+// ── API Functions ─────────────────────────────────────────────
 
-export function getAllSubmissions() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-  catch { return {}; }
+export async function getAllSubmissions() {
+  try {
+    const res = await fetch('/api/submissions');
+    if (!res.ok) return {};
+    return await res.json();
+  } catch (err) {
+    console.error('API Error:', err);
+    return {};
+  }
 }
 
 /**
- * Check if a project topic already exists in storage.
- * A topic can register only ONCE.
+ * Check if a project topic already exists.
  */
-export function isTopicAlreadyRegistered(topic) {
-  const all = getAllSubmissions();
+export async function isTopicAlreadyRegistered(topic) {
+  const all = await getAllSubmissions();
   const name = String(topic).trim().toLowerCase();
   return Object.keys(all).some(k => String(k).trim().toLowerCase() === name && all[k].length > 0);
 }
 
-/**
- * Save a group's submission.
- * Storage structure:
- *  {
- *    "ProjectTopicName": [
- *       { groupId, academicYear, department, projectTopic,
- *         leader: { name, rollno, email, mobile },
- *         members: [ { name, rollno, email, mobile }, ... ],  // 3 members
- *         students: [ all 4 in order ],
- *         submittedAt }
- *    ]
- *  }
- */
-export function saveSubmission(data) {
-  const all = getAllSubmissions();
-  const key = data.projectTopic.trim();
-  if (!all[key]) all[key] = [];
-
-  // Student[0] = leader, [1-3] = members
+export async function saveSubmission(data) {
   const [leader, ...members] = data.students;
   const entry = {
     ...data,
@@ -68,27 +54,54 @@ export function saveSubmission(data) {
     submittedAt: new Date().toISOString(),
   };
 
-  all[key].push(entry);
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch { }
-}
-
-export function clearAllSubmissions() {
-  try { localStorage.removeItem(STORAGE_KEY); } catch { }
-}
-
-export function deleteSubmission(projectTopic) {
-  const all = getAllSubmissions();
-  const key = String(projectTopic).trim();
-  
-  if (all[key]) {
-    delete all[key];
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch { }
+  try {
+    await fetch('/api/submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    });
+  } catch (err) {
+    console.error('API Error:', err);
   }
 }
 
-export function updateSubmission(oldProjectTopic, data) {
-  // First delete the old submission
-  deleteSubmission(oldProjectTopic);
-  // Then save the updated submission
-  saveSubmission(data);
+export async function clearAllSubmissions() {
+  try {
+    await fetch(`/api/submissions`, {
+      method: 'DELETE'
+    });
+  } catch (err) {
+    console.error('API Error:', err);
+  }
+}
+
+export async function deleteSubmission(projectTopic) {
+  const key = String(projectTopic).trim();
+  try {
+    await fetch(`/api/submissions/${encodeURIComponent(key)}`, {
+      method: 'DELETE'
+    });
+  } catch (err) {
+    console.error('API Error:', err);
+  }
+}
+
+export async function updateSubmission(oldProjectTopic, data) {
+  const [leader, ...members] = data.students;
+  const entry = {
+    ...data,
+    leader,
+    members,
+    submittedAt: new Date().toISOString(),
+  };
+
+  try {
+    await fetch(`/api/submissions/${encodeURIComponent(oldProjectTopic)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    });
+  } catch (err) {
+    console.error('API Error:', err);
+  }
 }

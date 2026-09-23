@@ -29,9 +29,9 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
 
   const handleExportAll = () => exportToExcel(data);
 
-  const handleClear = () => {
+  const handleClear = async () => {
     if (window.confirm('Saglya submissions delete karaycha ahet? (This cannot be undone)')) {
-      clearAllSubmissions();
+      await clearAllSubmissions();
       onClear();
     }
   };
@@ -140,9 +140,9 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                       </span>
                       <span
                         style={{cursor:'pointer',color:'var(--error)',fontSize:'0.73rem',fontWeight:600}}
-                        onClick={() => {
-                          if(window.confirm(`Are you sure you want to delete group "${group.groupName || group.groupId}"?`)) {
-                            deleteSubmission(topic, group.groupName || group.groupId);
+                        onClick={async () => {
+                          if(window.confirm(`Are you sure you want to delete project "${topic}"?`)) {
+                            await deleteSubmission(topic);
                             onRefresh();
                           }
                         }}
