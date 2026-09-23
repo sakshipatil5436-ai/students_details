@@ -14,11 +14,9 @@ const blankErrors  = () => ({ name: '', email: '', mobile: '' });
 const blankTouched = () => ({ name: false, email: false, mobile: false });
 
 const blankGroup = () => ({
-  groupName:    '',
   projectTopic: '',
 });
 const blankGroupErr = () => ({
-  groupName:    '',
   projectTopic: '',
 });
 
@@ -120,7 +118,7 @@ export default function App() {
   // ── Progress ────────────────────────────────────────────────
   useEffect(() => {
     let filled = 0;
-    ['groupName','projectTopic'].forEach(f => {
+    ['projectTopic'].forEach(f => {
       if (group[f]?.trim()) filled++;
     });
     students.forEach(s => {
@@ -128,7 +126,7 @@ export default function App() {
       if (!VALIDATORS.email(s.email))         filled++;
       if (!VALIDATORS.mobile(s.mobile))       filled++;
     });
-    setProgress(Math.round((filled / (2 + N * 3)) * 100));
+    setProgress(Math.round((filled / (1 + N * 3)) * 100));
   }, [group, students]);
 
   // ── Modal escape key ─────────────────────────────────────────
@@ -142,12 +140,12 @@ export default function App() {
   const handleGroupChange = useCallback((field, val) => {
     setGroup(prev => ({ ...prev, [field]: val }));
     if (val.trim()) setGroupErr(prev => ({ ...prev, [field]: '' }));
-    if (field === 'groupName') setGroupDupErr('');
+    if (field === 'projectTopic') setGroupDupErr('');
   }, []);
 
   const handleGroupBlur = useCallback((field) => {
     setGroupTouch(prev => ({ ...prev, [field]: true }));
-    const labels = { groupName:'Group Name', projectTopic:'Project topic' };
+    const labels = { projectTopic:'Project topic' };
     setGroupErr(prev => ({
       ...prev,
       [field]: VALIDATORS.required(group[field], labels[field]) || '',
@@ -188,19 +186,19 @@ export default function App() {
 
     // Group validation
     const newGroupErr   = blankGroupErr();
-    const newGroupTouch = { groupName: true, projectTopic: true };
-    const labels = { groupName:'Group Name', projectTopic:'Project topic' };
+    const newGroupTouch = { projectTopic: true };
+    const labels = { projectTopic:'Project topic' };
     Object.keys(labels).forEach(f => {
       newGroupErr[f] = VALIDATORS.required(group[f], labels[f]) || '';
       if (newGroupErr[f]) allOk = false;
     });
 
-    // Duplicate group check (skip if editing the SAME group name)
+    // Duplicate project topic check
     let dupErr = '';
-    if (!newGroupErr.groupName && group.groupName.trim()) {
-      if (isGroupAlreadyRegistered(group.groupName)) {
-        if (!editingMode || (editingMode.groupName.toLowerCase() !== group.groupName.toLowerCase())) {
-          dupErr = `Group "${group.groupName.trim()}" has already been registered. Each group can register only once.`;
+    if (!newGroupErr.projectTopic && group.projectTopic.trim()) {
+      if (isTopicAlreadyRegistered(group.projectTopic)) {
+        if (!editingMode || (editingMode.projectTopic.toLowerCase() !== group.projectTopic.toLowerCase())) {
+          dupErr = `Project "${group.projectTopic.trim()}" is already registered. Each topic can be registered only once.`;
           allOk  = false;
         }
       }
@@ -236,7 +234,7 @@ export default function App() {
     const submission = { ...group, students: students.map(s => ({ ...s })), submittedAt: new Date().toISOString() };
     setTimeout(() => {
       if (editingMode) {
-        updateSubmission(editingMode.projectTopic, editingMode.groupName, submission);
+        updateSubmission(editingMode.projectTopic, submission);
       } else {
         saveSubmission(submission);
       }
@@ -269,13 +267,12 @@ export default function App() {
 
   const handleEdit = (grp) => {
     setGroup({
-      groupName: grp.groupName || grp.groupId,
       projectTopic: grp.projectTopic,
     });
     const parsedStudents = grp.students || [grp.leader, ...grp.members];
     const newStudents = Array.from({ length: N }, (_, i) => parsedStudents[i] || blankStudent());
     setStudents(newStudents);
-    setEditingMode({ groupName: grp.groupName || grp.groupId, projectTopic: grp.projectTopic });
+    setEditingMode({ projectTopic: grp.projectTopic });
     
     // Clear errors
     setGroupErr(blankGroupErr()); setGroupTouch({});
@@ -295,7 +292,7 @@ export default function App() {
         <div className="form-title-banner" style={editingMode ? { background: '#92400e' } : {}}>
           <h1>{editingMode ? 'Admin: Editing Group Data' : 'Group Project Topic Registration Form'}</h1>
           <p>
-            {editingMode ? `Updating data for group: ${editingMode.groupName}` : 'Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader'}
+            {editingMode ? `Updating data for project: ${editingMode.projectTopic}` : 'Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader'}
           </p>
         </div>
 
@@ -308,66 +305,24 @@ export default function App() {
             <div className="part-divider" />
           </div>
 
-          <div className="group-details-grid">
-
-            <Field id="groupName" label="Group Name" required
-              error={groupDupErr || groupErr.groupName}
-              touched={groupTouch.groupName || !!groupDupErr}>
-              <input
-                id="groupName" type="text"
-                className={`field-input${
-                  groupDupErr ? ' err'
-                  : groupTouch.groupName ? (groupErr.groupName ? ' err' : group.groupName?.trim() ? ' ok' : '')
-                  : ''}`}
-                placeholder="e.g. Team Alpha or Group A"
-                value={group.groupName}
-                onChange={e => handleGroupChange('groupName', e.target.value)}
-                onBlur={() => handleGroupBlur('groupName')}
-              />
-              {groupDupErr && (
-                <div className="dup-error-block">
-                  🚫 {groupDupErr}
-                  <span>Ek group ek da register karu shakel. Baki tin members ne form bharane chukicha ahe.</span>
-                </div>
-              )}
-            </Field>
-
-            <Field id="academicYear" label="Academic Year / Semester" required
-              error={groupErr.academicYear} touched={groupTouch.academicYear}>
-              <input
-                id="academicYear" type="text"
-                className={`field-input${groupTouch.academicYear ? (groupErr.academicYear ? ' err' : group.academicYear?.trim() ? ' ok' : '') : ''}`}
-                placeholder="e.g. 2024-25 / Sem VI"
-                value={group.academicYear}
-                onChange={e => handleGroupChange('academicYear', e.target.value)}
-                onBlur={() => handleGroupBlur('academicYear')}
-              />
-            </Field>
-
-            <Field id="department" label="Department" required
-              error={groupErr.department} touched={groupTouch.department}>
-              <select
-                id="department"
-                className={`field-input${groupTouch.department ? (groupErr.department ? ' err' : group.department ? ' ok' : '') : ''}`}
-                value={group.department}
-                onChange={e => handleGroupChange('department', e.target.value)}
-                onBlur={() => handleGroupBlur('department')}
-              >
-                <option value="">— Select Department —</option>
-                {DEPT_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
-            </Field>
+          <div className="group-details-grid" style={{ gridTemplateColumns: '1fr' }}>
 
             <Field id="projectTopic" label="Project Topic / Name" required
-              error={groupErr.projectTopic} touched={groupTouch.projectTopic}>
+              error={groupDupErr || groupErr.projectTopic} touched={groupTouch.projectTopic || !!groupDupErr}>
               <input
                 id="projectTopic" type="text"
-                className={`field-input${groupTouch.projectTopic ? (groupErr.projectTopic ? ' err' : group.projectTopic?.trim() ? ' ok' : '') : ''}`}
+                className={`field-input${groupDupErr ? ' err' : groupTouch.projectTopic ? (groupErr.projectTopic ? ' err' : group.projectTopic?.trim() ? ' ok' : '') : ''}`}
                 placeholder="e.g. Smart Attendance System using Face Recognition"
                 value={group.projectTopic}
                 onChange={e => handleGroupChange('projectTopic', e.target.value)}
                 onBlur={() => handleGroupBlur('projectTopic')}
               />
+              {groupDupErr && (
+                <div className="dup-error-block">
+                  🚫 {groupDupErr}
+                  <span>Ek project topic var fakt ek group register karu shakel.</span>
+                </div>
+              )}
             </Field>
 
           </div>

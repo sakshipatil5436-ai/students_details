@@ -32,15 +32,13 @@ export function getAllSubmissions() {
 }
 
 /**
- * Check if a groupName already exists in storage (across ALL project topics).
- * A group can register only ONCE — identified by groupName.
+ * Check if a project topic already exists in storage.
+ * A topic can register only ONCE.
  */
-export function isGroupAlreadyRegistered(groupName) {
+export function isTopicAlreadyRegistered(topic) {
   const all = getAllSubmissions();
-  const name = String(groupName).trim().toLowerCase();
-  return Object.values(all).some(arr =>
-    arr.some(g => String(g.groupName || g.groupId || '').trim().toLowerCase() === name)
-  );
+  const name = String(topic).trim().toLowerCase();
+  return Object.keys(all).some(k => String(k).trim().toLowerCase() === name && all[k].length > 0);
 }
 
 /**
@@ -78,23 +76,19 @@ export function clearAllSubmissions() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { }
 }
 
-export function deleteSubmission(projectTopic, groupName) {
+export function deleteSubmission(projectTopic) {
   const all = getAllSubmissions();
   const key = String(projectTopic).trim();
-  const nameToMatch = String(groupName).trim().toLowerCase();
   
   if (all[key]) {
-    all[key] = all[key].filter(g => String(g.groupName || g.groupId || '').trim().toLowerCase() !== nameToMatch);
-    if (all[key].length === 0) {
-      delete all[key];
-    }
+    delete all[key];
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch { }
   }
 }
 
-export function updateSubmission(oldProjectTopic, oldGroupName, data) {
+export function updateSubmission(oldProjectTopic, data) {
   // First delete the old submission
-  deleteSubmission(oldProjectTopic, oldGroupName);
+  deleteSubmission(oldProjectTopic);
   // Then save the updated submission
   saveSubmission(data);
 }
