@@ -3,57 +3,56 @@ import * as XLSX from 'xlsx';
 
 /**
  * Export all stored submissions to an Excel file.
- * Each project topic becomes a separate Sheet tab.
+ * Creates a single master sheet containing all project topics and students.
  */
 export function exportToExcel(submissions) {
   const wb = XLSX.utils.book_new();
+  const rows = [];
+  
+  // Header Row
+  rows.push([
+    'Project Topic',
+    'Student Type',
+    'Sr. No.',
+    'Student Full Name',
+    'Email Address',
+    'Contact Number',
+    'Submitted At'
+  ]);
 
   Object.entries(submissions).forEach(([topic, groups]) => {
-    const rows = [];
-
-    groups.forEach((group, gi) => {
-      // Group header row
-      rows.push([`Group ${gi + 1}`, '', '', '', '']);
-      rows.push([
-        'Group Name', group.groupName || group.groupId,
-        'Submitted', new Date(group.submittedAt).toLocaleString('en-IN'),
-      ]);
-      rows.push([]); // blank
-      // Student table header
-      rows.push([
-        'Sr. No.',
-        'Student Full Name',
-        'Email Address',
-        'Contact Number',
-      ]);
-      // Student rows
+    groups.forEach((group) => {
+      const submitted = new Date(group.submittedAt).toLocaleString('en-IN');
       group.students.forEach((s, i) => {
+        if (!s.name || !s.name.trim()) return; // skip empty members
         rows.push([
+          topic,
+          i === 0 ? 'Leader' : 'Member',
           i + 1,
           s.name,
           s.email,
           s.mobile,
+          submitted
         ]);
       });
-      rows.push([]); // spacer between groups
-      rows.push(['─'.repeat(60)]);
-      rows.push([]);
     });
-
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-
-    // Column widths
-    ws['!cols'] = [
-      { wch: 8 }, { wch: 28 }, { wch: 22 }, { wch: 30 }, { wch: 18 },
-      { wch: 16 }, { wch: 16 }, { wch: 22 },
-    ];
-
-    // Sheet name max 31 chars
-    const sheetName = topic.length > 31 ? topic.slice(0, 28) + '...' : topic;
-    XLSX.utils.book_append_sheet(wb, ws, sheetName);
   });
 
-  XLSX.writeFile(wb, 'Group_Project_Registrations.xlsx');
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // Column widths
+  ws['!cols'] = [
+    { wch: 30 }, // Project Topic
+    { wch: 15 }, // Type
+    { wch: 8 },  // Sr No
+    { wch: 25 }, // Name
+    { wch: 30 }, // Email
+    { wch: 15 }, // Mobile
+    { wch: 20 }, // Submitted
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'All_Registrations');
+  XLSX.writeFile(wb, 'All_Project_Registrations.xlsx');
 }
 
 /**

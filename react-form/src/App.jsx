@@ -12,6 +12,7 @@ const ADMIN_PASS   = 'admin@@123'; // Change this password
 const blankStudent = () => ({ name: '', email: '', mobile: '' });
 const blankErrors  = () => ({ name: '', email: '', mobile: '' });
 const blankTouched = () => ({ name: false, email: false, mobile: false });
+const isStudentEmpty = (s) => !s.name.trim() && !s.email.trim() && !s.mobile.trim();
 
 const blankGroup = () => ({
   projectTopic: '',
@@ -118,15 +119,18 @@ export default function App() {
   // ── Progress ────────────────────────────────────────────────
   useEffect(() => {
     let filled = 0;
-    ['projectTopic'].forEach(f => {
-      if (group[f]?.trim()) filled++;
-    });
-    students.forEach(s => {
+    let totalRequired = 1; // 1 for projectTopic
+    
+    // Only count active members for progress
+    const activeStudents = students.filter((s, i) => i === 0 || !isStudentEmpty(s));
+    totalRequired += activeStudents.length * 3; // 3 fields per student
+
+    activeStudents.forEach(s => {
       if (!VALIDATORS.required(s.name, 'x')) filled++;
       if (!VALIDATORS.email(s.email))         filled++;
       if (!VALIDATORS.mobile(s.mobile))       filled++;
     });
-    setProgress(Math.round((filled / (1 + N * 3)) * 100));
+    setProgress(Math.round((filled / totalRequired) * 100));
   }, [group, students]);
 
   // ── Modal escape key ─────────────────────────────────────────
@@ -206,13 +210,16 @@ export default function App() {
     setGroupDupErr(dupErr);
 
     // Student validation
-    const newStuErrors = students.map(s => ({
-      name:   STUDENT_VALIDATORS.name(s.name)    || '',
-      email:  STUDENT_VALIDATORS.email(s.email)  || '',
-      mobile: STUDENT_VALIDATORS.mobile(s.mobile) || '',
-    }));
-    const newStuTouch = Array.from({ length: N }, () =>
-      ({ name: true, email: true, mobile: true })
+    const newStuErrors = students.map((s, i) => {
+      if (i > 0 && isStudentEmpty(s)) return blankErrors();
+      return {
+        name:   STUDENT_VALIDATORS.name(s.name)    || '',
+        email:  STUDENT_VALIDATORS.email(s.email)  || '',
+        mobile: STUDENT_VALIDATORS.mobile(s.mobile) || '',
+      };
+    });
+    const newStuTouch = Array.from({ length: N }, (_, i) => 
+      (i > 0 && isStudentEmpty(students[i])) ? blankTouched() : { name: true, email: true, mobile: true }
     );
     newStuErrors.forEach(e => {
       if (e.name || e.email || e.mobile) allOk = false;
@@ -231,7 +238,8 @@ export default function App() {
     }
 
     setSubmitting(true);
-    const submission = { ...group, students: students.map(s => ({ ...s })), submittedAt: new Date().toISOString() };
+    const filteredStudents = students.filter((s, i) => i === 0 || !isStudentEmpty(s)).map(s => ({ ...s }));
+    const submission = { ...group, students: filteredStudents, submittedAt: new Date().toISOString() };
     setTimeout(() => {
       if (editingMode) {
         updateSubmission(editingMode.projectTopic, submission);
