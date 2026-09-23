@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Project Registration Form</title>
+  <meta name="description" content="Register your student project team. Fill in team member details and project information to complete your registration." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background Blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="form-header">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h1>Student Project Registration</h1>
+      <p>Fill in your team details and project information to complete registration</p>
+      <div class="header-badges">
+        <span class="badge"><span class="badge-dot"></span>4 Members Required</span>
+        <span class="badge"><span class="badge-dot green"></span>Open Registration</span>
+      </div>
+    </header>
+
+    <!-- Form -->
+    <form id="registrationForm" class="registration-form" novalidate>
+
+      <!-- ===== TEAM MEMBERS SECTION ===== -->
+      <section class="form-section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Team Members</h2>
+            <p>All 4 team members must be registered</p>
+          </div>
+        </div>
+
+        <div class="students-grid">
+
+          <!-- Student 1 -->
+          <div class="student-card" id="student-card-1">
+            <div class="student-card-header">
+              <div class="student-number">
+                <span>01</span>
+              </div>
+              <div class="student-label">
+                <span class="student-title">Student 1</span>
+                <span class="student-subtitle">Team Leader</span>
+              </div>
+              <div class="student-status" id="status-1">
+                <svg class="status-icon incomplete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+            </div>
+            <div class="student-fields">
+              <div class="field-group">
+                <label for="s1_name">Full Name <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="s1_name" name="s1_name" placeholder="Enter full name" autocomplete="name" />
+                </div>
+                <span class="error-msg" id="err-s1_name"></span>
+              </div>
+              <div class="field-group">
+                <label for="s1_mobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                  <input type="tel" id="s1_mobile" name="s1_mobile" placeholder="+91 XXXXX XXXXX" maxlength="13" autocomplete="tel" />
+                </div>
+                <span class="error-msg" id="err-s1_mobile"></span>
+              </div>
+              <div class="field-group">
+                <label for="s1_email">Email Address <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="s1_email" name="s1_email" placeholder="student@college.edu" autocomplete="email" />
+                </div>
+                <span class="error-msg" id="err-s1_email"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student 2 -->
+          <div class="student-card" id="student-card-2">
+            <div class="student-card-header">
+              <div class="student-number">
+                <span>02</span>
+              </div>
+              <div class="student-label">
+                <span class="student-title">Student 2</span>
+                <span class="student-subtitle">Team Member</span>
+              </div>
+              <div class="student-status" id="status-2">
+                <svg class="status-icon incomplete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+            </div>
+            <div class="student-fields">
+              <div class="field-group">
+                <label for="s2_name">Full Name <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="s2_name" name="s2_name" placeholder="Enter full name" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s2_name"></span>
+              </div>
+              <div class="field-group">
+                <label for="s2_mobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                  <input type="tel" id="s2_mobile" name="s2_mobile" placeholder="+91 XXXXX XXXXX" maxlength="13" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s2_mobile"></span>
+              </div>
+              <div class="field-group">
+                <label for="s2_email">Email Address <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="s2_email" name="s2_email" placeholder="student@college.edu" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s2_email"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student 3 -->
+          <div class="student-card" id="student-card-3">
+            <div class="student-card-header">
+              <div class="student-number">
+                <span>03</span>
+              </div>
+              <div class="student-label">
+                <span class="student-title">Student 3</span>
+                <span class="student-subtitle">Team Member</span>
+              </div>
+              <div class="student-status" id="status-3">
+                <svg class="status-icon incomplete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+            </div>
+            <div class="student-fields">
+              <div class="field-group">
+                <label for="s3_name">Full Name <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="s3_name" name="s3_name" placeholder="Enter full name" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s3_name"></span>
+              </div>
+              <div class="field-group">
+                <label for="s3_mobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                  <input type="tel" id="s3_mobile" name="s3_mobile" placeholder="+91 XXXXX XXXXX" maxlength="13" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s3_mobile"></span>
+              </div>
+              <div class="field-group">
+                <label for="s3_email">Email Address <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="s3_email" name="s3_email" placeholder="student@college.edu" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s3_email"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Student 4 -->
+          <div class="student-card" id="student-card-4">
+            <div class="student-card-header">
+              <div class="student-number">
+                <span>04</span>
+              </div>
+              <div class="student-label">
+                <span class="student-title">Student 4</span>
+                <span class="student-subtitle">Team Member</span>
+              </div>
+              <div class="student-status" id="status-4">
+                <svg class="status-icon incomplete" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </div>
+            </div>
+            <div class="student-fields">
+              <div class="field-group">
+                <label for="s4_name">Full Name <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <input type="text" id="s4_name" name="s4_name" placeholder="Enter full name" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s4_name"></span>
+              </div>
+              <div class="field-group">
+                <label for="s4_mobile">Mobile Number <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                    <line x1="12" y1="18" x2="12.01" y2="18"/>
+                  </svg>
+                  <input type="tel" id="s4_mobile" name="s4_mobile" placeholder="+91 XXXXX XXXXX" maxlength="13" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s4_mobile"></span>
+              </div>
+              <div class="field-group">
+                <label for="s4_email">Email Address <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <input type="email" id="s4_email" name="s4_email" placeholder="student@college.edu" autocomplete="off" />
+                </div>
+                <span class="error-msg" id="err-s4_email"></span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end students-grid -->
+      </section>
+
+      <!-- ===== PROJECT DETAILS SECTION ===== -->
+      <section class="form-section project-section">
+        <div class="section-header">
+          <div class="section-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Project Details</h2>
+            <p>Tell us about your innovative project</p>
+          </div>
+        </div>
+
+        <div class="project-fields">
+          <div class="field-group">
+            <label for="project_name">Project Name <span class="required-star">*</span></label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+              <input type="text" id="project_name" name="project_name" placeholder="e.g. Smart Campus Navigation System" />
+            </div>
+            <span class="error-msg" id="err-project_name"></span>
+          </div>
+
+          <div class="field-group">
+            <label for="project_domain">Project Topic / Domain <span class="required-star">*</span></label>
+            <div class="input-wrapper select-wrapper">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4l3 3"/>
+              </svg>
+              <select id="project_domain" name="project_domain">
+                <option value="" disabled selected>Select a domain</option>
+                <option value="Artificial Intelligence / ML">Artificial Intelligence / ML</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Data Science / Analytics">Data Science / Analytics</option>
+                <option value="Blockchain">Blockchain</option>
+                <option value="Embedded Systems">Embedded Systems</option>
+                <option value="Game Development">Game Development</option>
+                <option value="Robotics / Automation">Robotics / Automation</option>
+                <option value="Healthcare Technology">Healthcare Technology</option>
+                <option value="EdTech / E-Learning">EdTech / E-Learning</option>
+                <option value="FinTech">FinTech</option>
+                <option value="Other">Other</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <span class="error-msg" id="err-project_domain"></span>
+          </div>
+
+          <div class="field-group full-width">
+            <label for="project_desc">
+              Brief Description 
+              <span class="optional-tag">Optional</span>
+            </label>
+            <div class="input-wrapper textarea-wrapper">
+              <textarea
+                id="project_desc"
+                name="project_desc"
+                placeholder="Describe your project idea, objectives, and the problem it solves... (max 500 characters)"
+                maxlength="500"
+                rows="4"
+              ></textarea>
+            </div>
+            <div class="char-counter"><span id="char-count">0</span> / 500 characters</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-label">
+          <span>Form Completion</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="submit-section">
+        <button type="submit" id="submitBtn" class="submit-btn">
+          <span class="btn-text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 2L11 13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            Submit Registration
+          </span>
+          <span class="btn-loader" style="display:none;">
+            <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+            Submitting...
+          </span>
+        </button>
+        <p class="submit-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          All fields marked with <span class="required-star">*</span> are mandatory
+        </p>
+      </div>
+
+    </form>
+
+    <!-- ===== SUCCESS MODAL ===== -->
+    <div class="modal-overlay" id="successModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <div class="modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <h2 id="modal-title">Registration Successful!</h2>
+        <p>Your team has been registered successfully. You will receive a confirmation on your registered email addresses.</p>
+        <div class="modal-team" id="modal-team-name"></div>
+        <button class="modal-btn" id="modalCloseBtn" onclick="closeModal()">
+          Done
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end page-wrapper -->
+
+  <script src="script.js"></script>
+</body>
+</html>
