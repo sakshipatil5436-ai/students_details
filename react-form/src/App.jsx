@@ -292,7 +292,7 @@ export default function App() {
         <div className="form-title-banner" style={editingMode ? { background: '#92400e' } : {}}>
           <h1>{editingMode ? 'Admin: Editing Group Data' : 'Group Project Topic Registration Form'}</h1>
           <p>
-            {editingMode ? `Updating data for project: ${editingMode.projectTopic}` : 'Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader'}
+            {editingMode ? `Updating data for project: ${editingMode.projectTopic}` : 'Register your Project Topic below (Sr. 1 student is the Group Leader)'}
           </p>
         </div>
 
