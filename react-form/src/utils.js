@@ -80,10 +80,13 @@ export function clearAllSubmissions() {
 
 export function deleteSubmission(projectTopic, groupName) {
   const all = getAllSubmissions();
-  if (all[projectTopic]) {
-    all[projectTopic] = all[projectTopic].filter(g => (g.groupName || g.groupId) !== groupName);
-    if (all[projectTopic].length === 0) {
-      delete all[projectTopic];
+  const key = String(projectTopic).trim();
+  const nameToMatch = String(groupName).trim().toLowerCase();
+  
+  if (all[key]) {
+    all[key] = all[key].filter(g => String(g.groupName || g.groupId || '').trim().toLowerCase() !== nameToMatch);
+    if (all[key].length === 0) {
+      delete all[key];
     }
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch { }
   }

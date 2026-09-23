@@ -310,10 +310,11 @@ export default function App() {
   return (
     <div className="app-wrapper">
 
-      {/* ══ STUDENT FORM VIEW ══════════════════════════════════ */}
+      {/* ══ FORM VIEW (Hidden for Admin unless editing) ════════ */}
+      {(!adminLoggedIn || editingMode) && (
       <div className="form-paper">
         <div className="form-title-banner" style={editingMode ? { background: '#92400e' } : {}}>
-          <h1>{editingMode ? 'Editing Registration' : 'Group Project Topic Registration Form'}</h1>
+          <h1>{editingMode ? 'Admin: Editing Group Data' : 'Group Project Topic Registration Form'}</h1>
           <p>
             {editingMode ? `Updating data for group: ${editingMode.groupName}` : 'Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader'}
           </p>
@@ -433,7 +434,7 @@ export default function App() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
                   </svg>
-                  {editingMode ? 'Update Registration' : 'Submit Registration'}
+                  {editingMode ? 'Save Changes' : 'Submit Registration'}
                 </>
               )}
             </button>
@@ -443,7 +444,7 @@ export default function App() {
                 <polyline points="1 4 1 10 7 10"/>
                 <path d="M3.51 15a9 9 0 1 0 .49-3.46"/>
               </svg>
-              Reset Form
+              {editingMode ? 'Cancel Edit' : 'Reset Form'}
             </button>
 
             <div className="form-note">
@@ -458,6 +459,7 @@ export default function App() {
 
         </form>
       </div>
+      )}
 
       {/* ══ ADMIN PANEL TRIGGER — visible link at bottom ══ */}
       <div style={{ textAlign: 'center', marginTop: 24 }}>

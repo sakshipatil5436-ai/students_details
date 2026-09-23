@@ -1,10 +1,33 @@
-// src/components/SubmissionsPanel.jsx
+import { useState } from 'react';
 import { exportToExcel, exportSingleGroup } from '../excelExport';
 import { deleteSubmission, clearAllSubmissions } from '../utils';
 
 export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
   const topics      = Object.keys(data);
   const totalGroups = Object.values(data).reduce((s, arr) => s + arr.length, 0);
+
+  // Filter logic
+  const filteredTopics = [];
+  const term = searchTerm.toLowerCase();
+  
+  topics.forEach(t => {
+    const matchedGroups = data[t].filter(g => {
+      const matchTopic = t.toLowerCase().includes(term);
+      const matchGroup = String(g.groupName || g.groupId || '').toLowerCase().includes(term);
+      const matchDept  = String(g.department || '').toLowerCase().includes(term);
+      const matchYear  = String(g.academicYear || '').toLowerCase().includes(term);
+      const students   = g.students || [g.leader, ...(g.members||[])];
+      const matchStu   = students.some(s => s && String(s.name || '').toLowerCase().includes(term));
+      
+      return matchTopic || matchGroup || matchDept || matchYear || matchStu;
+    });
+    
+    if (matchedGroups.length > 0) {
+      filteredTopics.push({ topic: t, groups: matchedGroups });
+    }
+  });
 
   const handleExportAll = () => exportToExcel(data);
 
@@ -49,6 +72,28 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
         </div>
       </div>
 
+      {/* Search Bar */}
+      {totalGroups > 0 && (
+        <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', background: '#fafafa' }}>
+          <div style={{ position: 'relative', maxWidth: 400 }}>
+            <svg style={{ position:'absolute', left:10, top:8, width:16, height:16, color:'#888' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by group name, student, or topic..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%', padding: '7px 10px 7px 34px',
+                border: '1px solid #ccc', borderRadius: 4,
+                fontSize: '0.82rem', outline: 'none'
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {totalGroups === 0 ? (
         <div className="no-submissions">
           <svg style={{width:32,height:32,marginBottom:8,color:'#d1d5db',display:'block',margin:'0 auto 8px'}}
@@ -58,8 +103,12 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
           </svg>
           Abhi tak koi group registered nahi. Form submit kara!
         </div>
+      ) : filteredTopics.length === 0 ? (
+        <div className="no-submissions" style={{ padding: '40px 20px', color: '#888' }}>
+          No groups match your search "{searchTerm}".
+        </div>
       ) : (
-        topics.map(topic => (
+        filteredTopics.map(({ topic, groups }) => (
           <div className="topic-group" key={topic}>
 
             {/* Topic heading */}
@@ -69,12 +118,12 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
               </svg>
               {topic}
               <span className="topic-count">
-                {data[topic].length} group{data[topic].length > 1 ? 's' : ''}
+                {groups.length} group{groups.length > 1 ? 's' : ''}
               </span>
             </div>
 
             {/* Group cards */}
-            {data[topic].map((group, gi) => {
+            {groups.map((group, gi) => {
               // Support both old format (students[]) and new format (leader + members)
               const leader  = group.leader  || group.students?.[0] || {};
               const members = group.members || group.students?.slice(1) || [];
@@ -113,20 +162,8 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                     </div>
                   </div>
 
-                  {/* Leader row */}
-                  <div className="leader-row-panel">
-                    <span className="leader-badge-sm">★ LEADER</span>
-                    <strong style={{color:'var(--text)'}}>{leader.name || '—'}</strong>
-                    <span>|</span>
-                    <span>{leader.rollno}</span>
-                    <span>|</span>
-                    <span>{leader.email}</span>
-                    <span>|</span>
-                    <span>{leader.mobile}</span>
-                  </div>
-
-                  {/* Members mini-table */}
-                  {members.length > 0 && (
+                  {/* Members mini-table including Leader */}
+                  {(leader.name || members.length > 0) && (
                     <table className="mini-table">
                       <thead>
                         <tr>
@@ -138,6 +175,20 @@ export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
                         </tr>
                       </thead>
                       <tbody>
+                        {/* Leader Row */}
+                        {leader.name && (
+                          <tr style={{ background: '#fdf8f6' }}>
+                            <td>1</td>
+                            <td>
+                              <strong>{leader.name}</strong>
+                              <span className="leader-badge-sm" style={{ marginLeft: 6 }}>★ LEADER</span>
+                            </td>
+                            <td>{leader.rollno}</td>
+                            <td>{leader.email}</td>
+                            <td>{leader.mobile}</td>
+                          </tr>
+                        )}
+                        {/* Member Rows */}
                         {members.map((s, si) => (
                           <tr key={si}>
                             <td>{si + 2}</td>
