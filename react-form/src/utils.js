@@ -15,10 +15,10 @@ export const VALIDATORS = {
     return null;
   },
   mobile(val) {
-    const cleaned = (val || '').replace(/\s+/g, '').replace(/-/g, '');
+    const cleaned = (val || '').replace(/\D/g, ''); // Extract only digits
     if (!cleaned) return 'Contact number is required.';
-    if (!/^(\+91)?[6-9]\d{9}$/.test(cleaned))
-      return 'Enter a valid 10-digit contact number.';
+    if (cleaned.length !== 10)
+      return 'Enter exactly 10 digits.';
     return null;
   },
 };

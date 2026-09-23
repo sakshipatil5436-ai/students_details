@@ -5,7 +5,7 @@ const COLS = [
   { key: 'name',   label: 'Student Full Name',      placeholder: 'Enter full name',    type: 'text',  validate: v => VALIDATORS.required(v, 'Full name') },
   { key: 'rollno', label: 'Roll / Enrollment No.',  placeholder: 'e.g. 21CS047',       type: 'text',  validate: v => VALIDATORS.rollno(v) },
   { key: 'email',  label: 'Email Address',           placeholder: 'student@college.edu',type: 'email', validate: v => VALIDATORS.email(v) },
-  { key: 'mobile', label: 'Contact Number',          placeholder: '+91 XXXXX XXXXX',    type: 'tel',   validate: v => VALIDATORS.mobile(v) },
+  { key: 'mobile', label: 'Contact Number',          placeholder: '10 digit number',    type: 'tel',   validate: v => VALIDATORS.mobile(v) },
 ];
 
 const LeaderBadge = () => (
@@ -57,10 +57,10 @@ export default function StudentTable({ students, errors, touched, onChange, onBl
                           : col.placeholder}
                         value={val}
                         autoComplete="off"
-                        maxLength={col.key === 'mobile' ? 13 : undefined}
+                        maxLength={col.key === 'mobile' ? 10 : undefined}
                         onChange={e => {
                           let v = e.target.value;
-                          if (col.key === 'mobile') v = v.replace(/[^\d+\s]/g, '');
+                          if (col.key === 'mobile') v = v.replace(/\D/g, '');
                           onChange(i, col.key, v);
                         }}
                         onBlur={() => onBlur(i, col.key)}
