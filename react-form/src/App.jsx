@@ -462,13 +462,13 @@ export default function App() {
       )}
 
       {/* ══ ADMIN PANEL TRIGGER — visible link at bottom ══ */}
-      <div style={{ textAlign: 'center', marginTop: 24 }}>
+      <div style={{ textAlign: 'center', marginTop: 32, marginBottom: 40 }}>
         <button
           onClick={() => adminLoggedIn ? null : setShowAdminLogin(true)}
           style={{
-            background: 'none', border: '1px solid #ccc', borderRadius: 4,
-            padding: '5px 16px', fontSize: '0.74rem', color: '#888',
-            cursor: 'pointer',
+            background: '#1a1a1a', border: '1px solid #000', borderRadius: 6,
+            padding: '8px 20px', fontSize: '0.85rem', color: '#fff',
+            cursor: 'pointer', fontWeight: '500', letterSpacing: '0.5px'
           }}>
           {adminLoggedIn ? '📋 Admin Panel (scroll down)' : '🔒 Admin Login'}
         </button>
