@@ -77,3 +77,21 @@ export function saveSubmission(data) {
 export function clearAllSubmissions() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { }
 }
+
+export function deleteSubmission(projectTopic, groupName) {
+  const all = getAllSubmissions();
+  if (all[projectTopic]) {
+    all[projectTopic] = all[projectTopic].filter(g => (g.groupName || g.groupId) !== groupName);
+    if (all[projectTopic].length === 0) {
+      delete all[projectTopic];
+    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch { }
+  }
+}
+
+export function updateSubmission(oldProjectTopic, oldGroupName, data) {
+  // First delete the old submission
+  deleteSubmission(oldProjectTopic, oldGroupName);
+  // Then save the updated submission
+  saveSubmission(data);
+}

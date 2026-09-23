@@ -1,8 +1,8 @@
 // src/components/SubmissionsPanel.jsx
 import { exportToExcel, exportSingleGroup } from '../excelExport';
-import { clearAllSubmissions } from '../utils';
+import { deleteSubmission, clearAllSubmissions } from '../utils';
 
-export default function SubmissionsPanel({ data, onClear }) {
+export default function SubmissionsPanel({ data, onClear, onRefresh, onEdit }) {
   const topics      = Object.keys(data);
   const totalGroups = Object.values(data).reduce((s, arr) => s + arr.length, 0);
 
@@ -86,12 +86,31 @@ export default function SubmissionsPanel({ data, onClear }) {
                     <span>👥 Group: <strong>{group.groupName || group.groupId || '—'}</strong></span>
                     <span>📅 <strong>{group.academicYear}</strong></span>
                     <span>🏛️ <strong>{group.department}</strong></span>
-                    <span
-                      style={{marginLeft:'auto',cursor:'pointer',color:'var(--success)',fontSize:'0.73rem',fontWeight:600}}
-                      onClick={() => exportSingleGroup(group)}
-                    >
-                      ⬇ Download
-                    </span>
+                    <div style={{ marginLeft: 'auto', display: 'flex', gap: 12 }}>
+                      <span
+                        style={{cursor:'pointer',color:'var(--text-mid)',fontSize:'0.73rem',fontWeight:600}}
+                        onClick={() => onEdit(group)}
+                      >
+                        ✏️ Edit
+                      </span>
+                      <span
+                        style={{cursor:'pointer',color:'var(--error)',fontSize:'0.73rem',fontWeight:600}}
+                        onClick={() => {
+                          if(window.confirm(`Are you sure you want to delete group "${group.groupName || group.groupId}"?`)) {
+                            deleteSubmission(topic, group.groupName || group.groupId);
+                            onRefresh();
+                          }
+                        }}
+                      >
+                        🗑️ Delete
+                      </span>
+                      <span
+                        style={{cursor:'pointer',color:'var(--success)',fontSize:'0.73rem',fontWeight:600}}
+                        onClick={() => exportSingleGroup(group)}
+                      >
+                        ⬇ Download
+                      </span>
+                    </div>
                   </div>
 
                   {/* Leader row */}

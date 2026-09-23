@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import StudentTable from './components/StudentTable';
 import SubmissionsPanel from './components/SubmissionsPanel';
-import { VALIDATORS, saveSubmission, getAllSubmissions, isGroupAlreadyRegistered } from './utils';
+import { VALIDATORS, saveSubmission, updateSubmission, getAllSubmissions, isGroupAlreadyRegistered } from './utils';
 import { exportSingleGroup } from './excelExport';
 
 // ── Constants ─────────────────────────────────────────────────
@@ -131,6 +131,9 @@ export default function App() {
   const [adminLoggedIn, setAdminLoggedIn] = useState(false);
   const [submissions,   setSubmissions]   = useState(getAllSubmissions());
 
+  // Editing state
+  const [editingMode,   setEditingMode]   = useState(null);
+
   // ── Progress ────────────────────────────────────────────────
   useEffect(() => {
     let filled = 0;
@@ -210,12 +213,14 @@ export default function App() {
       if (newGroupErr[f]) allOk = false;
     });
 
-    // Duplicate group check
+    // Duplicate group check (skip if editing the SAME group name)
     let dupErr = '';
     if (!newGroupErr.groupName && group.groupName.trim()) {
       if (isGroupAlreadyRegistered(group.groupName)) {
-        dupErr = `Group "${group.groupName.trim()}" has already been registered. Each group can register only once.`;
-        allOk  = false;
+        if (!editingMode || (editingMode.groupName.toLowerCase() !== group.groupName.toLowerCase())) {
+          dupErr = `Group "${group.groupName.trim()}" has already been registered. Each group can register only once.`;
+          allOk  = false;
+        }
       }
     }
     setGroupDupErr(dupErr);
@@ -249,7 +254,11 @@ export default function App() {
     setSubmitting(true);
     const submission = { ...group, students: students.map(s => ({ ...s })), submittedAt: new Date().toISOString() };
     setTimeout(() => {
-      saveSubmission(submission);
+      if (editingMode) {
+        updateSubmission(editingMode.projectTopic, editingMode.groupName, submission);
+      } else {
+        saveSubmission(submission);
+      }
       setLastData(submission);
       setSubmissions(getAllSubmissions());
       setSubmitting(false);
@@ -266,14 +275,35 @@ export default function App() {
     setStudents(Array.from({ length: N }, blankStudent));
     setStuErrors(Array.from({ length: N }, blankErrors));
     setStuTouch(Array.from({ length: N }, blankTouched));
+    setEditingMode(null);
     setShowModal(false);
   };
 
-  // ── Admin panel toggle ───────────────────────────────────────
+  // ── Admin panel handlers ──────────────────────────────────────
   const handleAdminLogin = () => {
     setAdminLoggedIn(true);
     setShowAdminLogin(false);
     setSubmissions(getAllSubmissions());
+  };
+
+  const handleEdit = (grp) => {
+    setGroup({
+      groupName: grp.groupName || grp.groupId,
+      academicYear: grp.academicYear,
+      department: grp.department,
+      projectTopic: grp.projectTopic,
+    });
+    const parsedStudents = grp.students || [grp.leader, ...grp.members];
+    const newStudents = Array.from({ length: N }, (_, i) => parsedStudents[i] || blankStudent());
+    setStudents(newStudents);
+    setEditingMode({ groupName: grp.groupName || grp.groupId, projectTopic: grp.projectTopic });
+    
+    // Clear errors
+    setGroupErr(blankGroupErr()); setGroupTouch({});
+    setStuErrors(Array.from({ length: N }, blankErrors)); setStuTouch(Array.from({ length: N }, blankTouched));
+    setGroupDupErr('');
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // ─────────────────────────────────────────────────────────────
@@ -282,9 +312,11 @@ export default function App() {
 
       {/* ══ STUDENT FORM VIEW ══════════════════════════════════ */}
       <div className="form-paper">
-        <div className="form-title-banner">
-          <h1>Group Project Topic Registration Form</h1>
-          <p>Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader</p>
+        <div className="form-title-banner" style={editingMode ? { background: '#92400e' } : {}}>
+          <h1>{editingMode ? 'Editing Registration' : 'Group Project Topic Registration Form'}</h1>
+          <p>
+            {editingMode ? `Updating data for group: ${editingMode.groupName}` : 'Each group registers <strong>once only</strong> — Sr. 1 student is the Group Leader'}
+          </p>
         </div>
 
         <form className="form-body" onSubmit={handleSubmit} noValidate>
@@ -401,7 +433,7 @@ export default function App() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
                   </svg>
-                  Submit Registration
+                  {editingMode ? 'Update Registration' : 'Submit Registration'}
                 </>
               )}
             </button>
@@ -471,6 +503,8 @@ export default function App() {
           <SubmissionsPanel
             data={submissions}
             onClear={() => setSubmissions(getAllSubmissions())}
+            onRefresh={() => setSubmissions(getAllSubmissions())}
+            onEdit={handleEdit}
           />
         </>
       )}
