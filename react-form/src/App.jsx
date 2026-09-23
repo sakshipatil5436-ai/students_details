@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import StudentTable from './components/StudentTable';
 import SubmissionsPanel from './components/SubmissionsPanel';
-import { VALIDATORS, saveSubmission, updateSubmission, getAllSubmissions, isGroupAlreadyRegistered } from './utils';
+import { VALIDATORS, saveSubmission, updateSubmission, getAllSubmissions, isTopicAlreadyRegistered } from './utils';
 import { exportSingleGroup } from './excelExport';
 
 // ── Constants ─────────────────────────────────────────────────
