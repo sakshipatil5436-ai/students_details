@@ -35,6 +35,10 @@ export function exportToExcel(submissions) {
           submitted
         ]);
       });
+      // Visual separation for each group
+      rows.push(['', '', '', '', '', '', '']);
+      rows.push(['─'.repeat(30), '─'.repeat(10), '─'.repeat(5), '─'.repeat(20), '─'.repeat(20), '─'.repeat(15), '─'.repeat(20)]);
+      rows.push(['', '', '', '', '', '', '']);
     });
   });
 
